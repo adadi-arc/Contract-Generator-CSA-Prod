@@ -1,0 +1,113 @@
+<!-- <div class="top-ribbon row">
+</div> -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<form #servicecontract="ngForm" class="shadow-lg p-3 mt-132 rounded needs-validation">
+  <app-my-heading heading="Service Contract Generator"></app-my-heading>
+  <div class="row">
+    <div class="col-md-12">
+      <mat-accordion class="example-headers-align">
+        <mat-expansion-panel [expanded]="step === 0" hideToggle>
+          <mat-expansion-panel-header style="background-color: #4c7ab5; height: 43px">
+            <mat-panel-title style="color: white">
+              Contract Type
+            </mat-panel-title>
+            <mat-panel-description style="display: contents">
+              <mat-icon style="color: white">description</mat-icon>
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+
+
+          <mat-form-field class="example-full-width" style="width: 30%; margin-top: 15px" id="formselect">
+            <mat-label>Service Contract:</mat-label>
+            <mat-select class="MatInputBoxShadow" type="text" name="contracts" required [(ngModel)]="contracts"
+              (selectionChange)="gettemplates(contracts)">
+              <mat-option>-- Clear --</mat-option>
+              <mat-option *ngFor="let option of contract" [value]="option.ID">
+                {{ option.Title }}
+              </mat-option>
+            </mat-select>
+            <mat-error>This field is required</mat-error>
+          </mat-form-field>
+
+          <mat-form-field class="example-full-width" style="width: 30%; margin-top: 15px; margin-left: 15px;"
+            id="formselect" *ngIf="contracts != 3">
+            <mat-label>Select Contract Type:</mat-label>
+            <mat-select class="MatInputBoxShadow" type="text" name="FormSelect" required [(ngModel)]="selectedForm"
+              (selectionChange)="check(selectedForm)">
+              <mat-option>-- Clear --</mat-option>
+              <mat-option *ngFor="let option of templates" [value]="option.ID">
+                {{ option.Title }}
+              </mat-option>
+            </mat-select>
+            <mat-error>This field is required</mat-error>
+          </mat-form-field>
+          <mat-form-field class="example-full-width"
+            style="width: 30%; margin-top: 15px; margin-left: 40px; margin-left: 15px;" id="formselect"
+            *ngIf="this.FormName == 'Consulting Services Agreement'">
+            <mat-label>Select Contract Template:</mat-label>
+            <mat-select class="MatInputBoxShadow" type="text" name="ConsultingServiceTemp" required
+              [(ngModel)]="ConsultingServiceTemp" (selectionChange)="
+                ConsultingTem(ConsultingServiceTemp);
+                resetStates(servicecontract)
+              ">
+              <mat-option>-- Clear --</mat-option>
+              <mat-option *ngFor="let option of ConsultinServiceTem" [value]="option.Title">
+                {{ option.Title }}
+              </mat-option>
+            </mat-select>
+            <mat-error>This field is required</mat-error>
+          </mat-form-field>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </div>
+
+    <div *ngIf="selectedForm === 1 && contracts === 1">
+      <app-service-contract></app-service-contract>
+    </div>
+
+
+
+    <div *ngIf="selectedForm === 11 && contracts === 1">
+      <app-service-contract-university></app-service-contract-university>
+    </div>
+    <div *ngIf="selectedForm === 12 && contracts === 1">
+      <app-trs-university-park></app-trs-university-park>
+    </div>
+    
+
+    <div *ngIf="selectedForm === 2 && contracts === 1">
+      <app-trsservice-contract></app-trsservice-contract>
+    </div>
+    <div *ngIf="contracts === 3">
+      <app-change-order></app-change-order>
+    </div>
+    <div *ngIf="selectedForm === 4 && contracts === 1">
+      <app-flatiron-contract></app-flatiron-contract>
+    </div>
+    <div *ngIf="selectedForm === 5 && contracts === 1">
+      <app-service-contrat-bmrlp></app-service-contrat-bmrlp>
+    </div>
+    <div *ngIf="selectedForm === 9 && contracts === 1">
+      <app-getwaymanager-trs-service></app-getwaymanager-trs-service>
+    </div>
+    <!-- <div *ngIf="selectedForm === 10 && contracts === 1">
+      <app-internal-trsservice></app-internal-trsservice>
+    </div> -->
+
+
+
+
+    <div *ngIf="contracts === 2 && selectedForm === 6">
+      <app-general-csa></app-general-csa>
+    </div>
+    <div *ngIf="contracts === 2 && selectedForm === 7">
+      <app-flatiron-csa></app-flatiron-csa>
+    </div>
+    <div *ngIf="contracts === 2 && selectedForm === 8">
+      <app-trs-csa></app-trs-csa>
+    </div>
+
+
+
+  </div>
+</form>

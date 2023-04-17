@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ServiceContract } from 'src/app/models/servicecontract.model';
@@ -15,7 +15,7 @@ declare let DocxReader: any;
   styleUrls: ['./trs-university-park.component.scss']
 })
 export class TrsUniversityParkComponent implements OnInit {
-
+  @Input() ContractorName: any = null;
   formData = new contract()
   dataProperty: any[] = [];
   menuData: any[] = [];
@@ -188,7 +188,9 @@ export class TrsUniversityParkComponent implements OnInit {
   }
   onChange(val){}
 
-  onSave() { 
+  async onSave() { 
+    await this.serviceContract.SubmitTrackingEntry(this.ContractorName)
+        //  var steUrl ='/sites/fredd/SourceCode1/UAT/DocumentFiles/Form of Service Contract (University Park TRS 11-7-22).docx'; //UAT
          var steUrl ='/sites/fredd/SourceCode1/ChangeOrder/assets/template/Form of Service Contract (University Park TRS 11-7-22).docx'; //prod
         // var steUrl = '/assets/template/Form of Service Contract (University Park TRS 11-7-22).docx'; //local
     var docx = new DocxReader();

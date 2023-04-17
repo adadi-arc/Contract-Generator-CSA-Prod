@@ -143,6 +143,21 @@ export class SpService {
     return res.d;
   }
 
+  createSPItems(listTitle: string, jsonBody: any) {
+    const url = this.getReadURL(listTitle, null);
+    const type = this.setListItemTypePostPut(listTitle);
+
+    if (!jsonBody.__metadata) {
+      jsonBody.__metadata = {
+        'type': type
+      };
+    }
+
+    const data = JSON.stringify(jsonBody);
+    return this.http.post(url, data, this.getHeaders(true, true))
+
+  }
+
   setListItemTypePostPut(listTitle: string) {
     let titleForItemTpe = listTitle.replace(/ /g, '_x0020_');
     return "SP.Data." + titleForItemTpe.charAt(0).toUpperCase() + titleForItemTpe.slice(1) + "ListItem";

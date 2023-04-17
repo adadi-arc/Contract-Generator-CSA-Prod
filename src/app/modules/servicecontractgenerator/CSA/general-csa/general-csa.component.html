@@ -345,7 +345,7 @@
                             </mat-form-field>
                           </div>
                         </div>
-                        <div class="row mt-2">
+                        <!-- <div class="row mt-2">
                           <div class="col-md-3">
                             <p>Include not to exceed amount?</p>
                             <mat-radio-group aria-label="Net Change Details" [(ngModel)]="formData.includeAmount" [ngModelOptions]="{ standalone: true }">
@@ -364,7 +364,7 @@
                           </mat-radio-group>
                           <br />
                        </div>
-                        </div>
+                        </div> -->
                         <div class="row mt-2">
                           <div class="col-md-12">
                             <mat-checkbox
@@ -380,13 +380,13 @@
                               [(ngModel)]="formData.selectedCovid"
                               >Will consultants be on-site (COVID restrictions apply)?
                             </mat-checkbox>
-                            <mat-checkbox
+                            <!-- <mat-checkbox
                               class="example-margin ms-2"
                               name="PollutionLiability"
                               [(ngModel)]="formData.selectedPollutionLiability"
                             >
                               Include Pollution Liability?
-                            </mat-checkbox>
+                            </mat-checkbox> -->
                           </div>
                         </div>
                       </div>
@@ -407,7 +407,7 @@
                             </mat-expansion-panel-header>
                      
                             <div class="row" style="margin-top: 18px">
-                                <div class="col-md-4">
+                                <!-- <div class="col-md-4">
                                   <mat-form-field style="width: 100%;">
                                     <mat-label>Date Selection:</mat-label>
                                     <mat-select class="MatInputBoxShadow" type="text" name="dateSelection" required [(ngModel)]="formData.dateSelection"
@@ -433,8 +433,8 @@
                                     <mat-error>This field is required</mat-error>
                                   </mat-form-field>
                                 </div>
-                           
-                                <div class="col-md-4" *ngIf="formData.dateSelection == 'On'">
+                            -->
+                                <div class="col-md-4" >
                                     <mat-form-field class="example-full-width" style="width: 100%" 
                                  >
                                         <mat-label>Execution Date:</mat-label>
@@ -443,7 +443,7 @@
                                         <mat-error>This field is required </mat-error>
                                     </mat-form-field>
                                 </div>
-                                <div class="col-md-4" *ngIf="formData.dateSelection == 'No later than'">
+                                <div class="col-md-4" >
                                     <mat-form-field class="example-full-width" style="width: 100%">
                                         <mat-label>Commencement Date:</mat-label>
                                         <input matInput class="MatInputBoxShadow" type="date" required name="CommencementDate"

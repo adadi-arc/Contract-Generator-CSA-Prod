@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ServiceContract } from 'src/app/models/servicecontract.model';
@@ -15,6 +15,7 @@ declare let DocxReader: any;
   styleUrls: ['./internal-trsservice.component.scss']
 })
 export class InternalTRSServiceComponent implements OnInit {
+  @Input() ContractorName: any = null;
   formData = new contract()
   dataProperty: any[] = [];
   menuData: any[] = [];
@@ -36,6 +37,7 @@ export class InternalTRSServiceComponent implements OnInit {
     this.getData();
   }
   ngOnInit(): void {
+
   }
   getData() {
     this.serviceContract.getAllProperty().then((res) => {
@@ -182,7 +184,9 @@ export class InternalTRSServiceComponent implements OnInit {
     return false;
   }
 
-  onSave() {
+  async onSave() {
+    await this.serviceContract.SubmitTrackingEntry(this.ContractorName)
+    // var steUrl ='/sites/fredd/SourceCode1/UAT/DocumentFiles/InternalTRSServiceContract.docx'; //UAT
     var steUrl ='/sites/fredd/SourceCode1/ChangeOrder/assets/template/InternalTRSServiceContract.docx'; //prod
     // var steUrl = '/assets/template/InternalTRSServiceContract.docx'; //local 
     var docx = new DocxReader();

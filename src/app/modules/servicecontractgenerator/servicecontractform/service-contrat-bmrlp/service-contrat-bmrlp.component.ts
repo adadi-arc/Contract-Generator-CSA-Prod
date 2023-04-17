@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { contract } from '../modal';
 import { NgForm } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -14,6 +14,7 @@ declare let DocxReader: any;
   styleUrls: ['./service-contrat-bmrlp.component.scss']
 })
 export class ServiceContratBmrlpComponent implements OnInit {
+  @Input() ContractorName: any = null;
   formData = new contract();
   step = 0;
 
@@ -24,6 +25,7 @@ export class ServiceContratBmrlpComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+
   }
 
   resetStates(servicecontract: NgForm) {
@@ -76,10 +78,12 @@ export class ServiceContratBmrlpComponent implements OnInit {
       return true;
   }
 
-  onSave() {
-       var steUrl ='/sites/fredd/SourceCode1/ChangeOrder/assets/template/ServiceTemplateBMR LPclean.docx'; //prod
+  async onSave() {
+    await this.serviceContract.SubmitTrackingEntry(this.ContractorName)
+      // var steUrl ='/sites/fredd/SourceCode1/UAT/DocumentFiles/ServiceTemplateBMR LPclean.docx'; //UAT
+      var steUrl ='/sites/fredd/SourceCode1/ChangeOrder/assets/template/ServiceTemplateBMR LPclean.docx'; //prod
     // var steUrl = "/sites/fredd/SourceCode/assets/template/ServiceContractTemplate.docx"; //Staging
-      //  var steUrl = '/assets/template/ServiceTemplateBMR LPclean.docx'; //local
+    //  var steUrl = '/assets/template/ServiceTemplateBMR LPclean.docx'; //local
     var docx = new DocxReader();
     docx.Load(steUrl, () => {
       var docxvar = {};

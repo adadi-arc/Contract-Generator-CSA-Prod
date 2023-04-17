@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ServiceContract } from 'src/app/models/servicecontract.model';
@@ -14,6 +14,7 @@ declare let DocxReader: any;;
   styleUrls: ['./trs-csa.component.scss']
 })
 export class TrsCsaComponent implements OnInit {
+  @Input() ContractorName: any = null;
   pollutionLiabilityHeading: string = 'Contractor’s Pollution Liability:';
   pollutionLiability: string = 'If Consultant or subconsultant’s Services involve environmental hazards including but not limited to assessing, handling, remediating, treating, storage or disposal of waste or hazardous materials on or about the project site as determined by Holdings, Consultant shall maintain a minimum limit of $2,000,000 per incident with a $4,000,000 policy aggregate.  Such coverage shall include defense costs applicable to claims for bodily injury, property damage or clean-up costs.  Claims-made coverage is permitted, provided the policy retroactive date is continuously maintained prior to the commencement date of this Agreement and coverage is continuously maintained during all periods Consultant performs Services for Holdings plus an additional period through the statute of repose as applicable.'
   formData = new contract()
@@ -46,13 +47,20 @@ export class TrsCsaComponent implements OnInit {
   getData() {
     this.serviceContract.getAllProperty().then((res) => {
       this.dataProperty = res['d'].results as any[];
+
       for (var count = 0; count < this.dataProperty.length; count++) {
         var order = this.dataProperty[count];
         // console.log(order);
-           var lines = (order.FREDDPropertyName.results[0].Label).split(':'); //{rod/Staging
-              // var lines = order.Fredd_x0020_Property_x0020_Name_.split(':'); //Local
-        // Prod/Staging
-         this.menuData.push({
+         var lines = (order.FREDDPropertyName.results[0].Label).split(':'); //{rod/Staging
+        // var lines = order.Fredd_x0020_Property_x0020_Name_.split(':'); //Local
+        if (order.EntityName == 'RE-BMR Campus at Towne Centre LP' || order.EntityName == 'BMR-Dexter LLC' || order.EntityName == 'BMR-201 Elliott Avenue LLC'
+          || order.EntityName == 'BMR-Gateway Manager LP' || order.EntityName == 'BMR-Gateway of Pacific II LLC' || order.EntityName == 'BMR-Pacific Research Center LP'
+          || order.EntityName == 'BMR-Athena LP' || order.EntityName == 'BRE-BMR 35 Landsdowne LLC' || order.EntityName == 'BRE-BMR 40 Landsdowne LLC'
+          || order.EntityName == 'BRE-BMR 300 Massachusetts LLC' || order.EntityName == 'BRE-BMR 350 Massachusetts LLC' || order.EntityName == 'BRE-BMR Oberlin LP'
+          || order.EntityName == 'BRE-BMR Pilgrim & Sidney LLC' || order.EntityName == 'BRE-BMR 31st LLC' || order.EntityName == 'BMR-Axiom LP'
+          || order.EntityName == 'BioMed Realty LLC' || order.EntityName == 'BMR-500 Fairview Avenue LLC') {
+          // Prod/Staging
+           this.menuData.push({
             "Property": lines[3],
             "ID": order.ID,
             "Region": lines[1],
@@ -62,24 +70,25 @@ export class TrsCsaComponent implements OnInit {
            "AdditionalInsureds": order.AdditionalInsureds,
             "EntityID": order.EntityID
            });
-        //Local
-        //  this.menuData.push({
-        //    Property: lines[3],
-        //    ID: order.ID,
-        //    Region: lines[1],
-        //    Market: lines[2],
-        //    Owner: order.EntityName,
-        //    StateOfFormation: order.StateofFormation,
-        //    AdditionalInsureds: order.AdditionalInsureds,
-        //    EntityID: order.EntityID,
-        //  });
+          //Local
+          //  this.menuData.push({
+          //  Property: lines[3],
+          //  ID: order.ID,
+          //  Region: lines[1],
+          //  Market: lines[2],
+          //  Owner: order.EntityName,
+          //  StateOfFormation: order.StateofFormation,
+          //  AdditionalInsureds: order.AdditionalInsureds,
+          //  EntityID: order.EntityID,
+          //  });
+        }
       }
       this.Region = [
         ...new Map(
           this.menuData.map((item) => [item['Region'], item])
         ).values(),
       ];
-      this.Region = this.Region.sort((a, b) => (a.Region > b.Region ? 1 : -1));    
+      this.Region = this.Region.sort((a, b) => (a.Region > b.Region ? 1 : -1));
       this.marketHeadArr = [
         ...new Map(
           this.menuData.map((item) => [item['Market'], item])
@@ -342,8 +351,10 @@ export class TrsCsaComponent implements OnInit {
 
    
 
-    onSave() {
-            // var steUrl = '/assets/template/TRSFormofConsultingServicesAgreement.docx'; //local
+    async onSave() {
+      await this.serviceContract.SubmitTrackingEntry(this.ContractorName)
+          //  var steUrl = '/assets/template/TRSFormofConsultingServicesAgreement.docx'; //local
+          //  var steUrl = "/sites/fredd/SourceCode1/UAT/DocumentFiles/TRSFormofConsultingServicesAgreement.docx"; //UAT
            var steUrl = "/sites/fredd/SourceCode1/ChangeOrder/assets/template/TRSFormofConsultingServicesAgreement.docx"; //prod
       var docx = new DocxReader();
       docx.Load(steUrl, () => {
@@ -707,26 +718,33 @@ export class TrsCsaComponent implements OnInit {
             if (docx.Search('Covid') == true) {
               docxvar['Covid'] = this.formData.covid19;
             }
+            if (docx.Search('CovidHeading') == true) {
+              docxvar['CovidHeading'] = 'COVID-19.';
+            }
           } else {
             if (docx.Search('Covid') == true) {
               docxvar['Covid'] = '';
             }
+            if (docx.Search('CovidHeading') == true) {
+              docxvar['CovidHeading'] = '';
+            }
           }
-          if (this.formData.selectedPollutionLiability == true) {
+          // if (this.formData.selectedPollutionLiability == true) {
             if (docx.Search('Pollution') == true) {
               docxvar['Pollution'] = this.pollutionLiability;
             }
             if (docx.Search('PollutionHeading') == true) {
               docxvar['PollutionHeading'] = this.pollutionLiabilityHeading;
             }
-          } else {
-            if (docx.Search('Pollution') == true) {
-              docxvar['Pollution'] = '';
-            }
-            if (docx.Search('PollutionHeading') == true) {
-              docxvar['PollutionHeading'] = '';
-            }
-          }
+          // }
+          //  else {
+          //   if (docx.Search('Pollution') == true) {
+          //     docxvar['Pollution'] = '';
+          //   }
+          //   if (docx.Search('PollutionHeading') == true) {
+          //     docxvar['PollutionHeading'] = '';
+          //   }
+          // }
   
         
         docx.docxtemplater.setData(docxvar);

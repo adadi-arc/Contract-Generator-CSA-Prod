@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ServiceContract } from 'src/app/models/servicecontract.model';
@@ -18,6 +18,7 @@ declare let DocxReader: any;
 })
 
 export class ServiceContractComponent implements OnInit {
+  @Input() ContractorName: any = null;
   formData = new contract()
   step = 0
   obj: ServiceContract;
@@ -52,30 +53,30 @@ export class ServiceContractComponent implements OnInit {
       for (var count = 0; count < this.dataProperty.length; count++) {
         var order = this.dataProperty[count];
         // console.log(order);
-             var lines = (order.FREDDPropertyName.results[0].Label).split(':'); //{rod/Staging
-            // var lines = order.Fredd_x0020_Property_x0020_Name_.split(':'); //Local
+              var lines = (order.FREDDPropertyName.results[0].Label).split(':'); //{rod/Staging
+              // var lines = order.Fredd_x0020_Property_x0020_Name_.split(':'); //Local
         // Prod/Staging
-           this.menuData.push({
-              "Property": lines[3],
-              "ID": order.ID,
-              "Region": lines[1],
-              "Market": lines[2],
-              "Owner": order.EntityName,
-              "StateOfFormation": order.StateofFormation,
-             "AdditionalInsureds": order.AdditionalInsureds,
-              "EntityID": order.EntityID
-             });
+               this.menuData.push({
+                "Property": lines[3],
+                "ID": order.ID,
+                "Region": lines[1],
+                "Market": lines[2],
+                "Owner": order.EntityName,
+                "StateOfFormation": order.StateofFormation,
+               "AdditionalInsureds": order.AdditionalInsureds,
+                "EntityID": order.EntityID
+               });
         //Local
-          // this.menuData.push({
-          //   Property: lines[3],
-          //   ID: order.ID,
-          //   Region: lines[1],
-          //   Market: lines[2],
-          //   Owner: order.EntityName,
-          //   StateOfFormation: order.StateofFormation,
-          //   AdditionalInsureds: order.AdditionalInsureds,
-          //   EntityID: order.EntityID,
-          // });
+            // this.menuData.push({
+              // Property: lines[3],
+              // ID: order.ID,
+              // Region: lines[1],
+              // Market: lines[2],
+              // Owner: order.EntityName,
+              // StateOfFormation: order.StateofFormation,
+              // AdditionalInsureds: order.AdditionalInsureds,
+              // EntityID: order.EntityID,
+            // });
       }
       this.Region = [
         ...new Map(
@@ -187,15 +188,18 @@ export class ServiceContractComponent implements OnInit {
 
     return false;
   }
-  onSave() {
+  async onSave() {
     //SERVICE CONTRACT
+    await this.serviceContract.SubmitTrackingEntry(this.ContractorName)
     if (this.formData.selectedOwner.Owner != 'BMR-Gateway Manager LP') {
-         var steUrl ='/sites/fredd/SourceCode1/ChangeOrder/assets/template/ServiceContractTemplate.docx'; //prod
+      // var steUrl ='/sites/fredd/SourceCode1/UAT/DocumentFiles/ServiceContractTemplate.docx'; //UAT
+      var steUrl ='/sites/fredd/SourceCode1/ChangeOrder/assets/template/ServiceContractTemplate.docx'; //prod
       // var steUrl = "/sites/fredd/SourceCode/assets/template/ServiceContractTemplate.docx"; //Staging
       //  var steUrl = '/assets/template/ServiceContractTemplate.docx'; //local
     } else if (this.formData.selectedOwner.Owner == 'BMR-Gateway Manager LP') {
-        // var steUrl = '/assets/template/NonTRSServicesGatewayManager.docx';
-       var steUrl = "/sites/fredd/SourceCode1/ChangeOrder/assets/template/NonTRSServicesGatewayManager.docx"; //prod     
+      //  var steUrl = '/assets/template/NonTRSServicesGatewayManager.docx';
+      // var steUrl = "/sites/fredd/SourceCode1/UAT/DocumentFiles/NonTRSServicesGatewayManager.docx"; //UAT     
+      var steUrl = "/sites/fredd/SourceCode1/ChangeOrder/assets/template/NonTRSServicesGatewayManager.docx"; //prod     
     }
 
     var docx = new DocxReader();

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ServiceContract } from 'src/app/models/servicecontract.model';
@@ -14,6 +14,7 @@ declare let DocxReader: any;
   styleUrls: ['./getwaymanager-trs-service.component.scss']
 })
 export class GetwaymanagerTrsServiceComponent implements OnInit {
+  @Input() ContractorName: any = null;
   formData = new contract()
   dataProperty: any[] = [];
   menuData: any[] = [];
@@ -35,7 +36,6 @@ export class GetwaymanagerTrsServiceComponent implements OnInit {
     this.getData();
   }
   ngOnInit(): void {
-
   }
   clearPM() {
     this.formData.selectedPropertyManager = null;
@@ -46,30 +46,30 @@ export class GetwaymanagerTrsServiceComponent implements OnInit {
       for (var count = 0; count < this.dataProperty.length; count++) {
         var order = this.dataProperty[count];
         // console.log(order);
-            var lines = (order.FREDDPropertyName.results[0].Label).split(':'); //{rod/Staging
-        //  var lines = order.Fredd_x0020_Property_x0020_Name_.split(':'); //Local
+          var lines = (order.FREDDPropertyName.results[0].Label).split(':'); //{rod/Staging
+          // var lines = order.Fredd_x0020_Property_x0020_Name_.split(':'); //Local
         // Prod/Staging
           this.menuData.push({
-             "Property": lines[3],
-             "ID": order.ID,
-             "Region": lines[1],
-             "Market": lines[2],
-             "Owner": order.EntityName,
-             "StateOfFormation": order.StateofFormation,
-            "AdditionalInsureds": order.AdditionalInsureds,
-             "EntityID": order.EntityID
-            });
+          "Property": lines[3],
+          "ID": order.ID,
+          "Region": lines[1],
+          "Market": lines[2],
+          "Owner": order.EntityName,
+          "StateOfFormation": order.StateofFormation,
+         "AdditionalInsureds": order.AdditionalInsureds,
+          "EntityID": order.EntityID
+         });
         //Local
-        //  this.menuData.push({
-        //    Property: lines[3],
-        //    ID: order.ID,
-        //    Region: lines[1],
-        //    Market: lines[2],
-        //    Owner: order.EntityName,
-        //    StateOfFormation: order.StateofFormation,
-        //    AdditionalInsureds: order.AdditionalInsureds,
-        //    EntityID: order.EntityID,
-        //  });
+          // this.menuData.push({
+            // Property: lines[3],
+            // ID: order.ID,
+            // Region: lines[1],
+            // Market: lines[2],
+            // Owner: order.EntityName,
+            // StateOfFormation: order.StateofFormation,
+            // AdditionalInsureds: order.AdditionalInsureds,
+            // EntityID: order.EntityID,
+          // });
       }
       this.Region = [
         ...new Map(
@@ -185,8 +185,10 @@ export class GetwaymanagerTrsServiceComponent implements OnInit {
     return false;
   }
 
-  onSave() {
-       var steUrl ='/sites/fredd/SourceCode1/ChangeOrder/assets/template/GatewayManagerTRSServiceContract.docx'; //prod
+  async onSave() {
+      await this.serviceContract.SubmitTrackingEntry(this.ContractorName)
+      // var steUrl ='/sites/fredd/SourceCode1/UAT/DocumentFiles/GatewayManagerTRSServiceContract.docx'; //UAT
+      var steUrl ='/sites/fredd/SourceCode1/ChangeOrder/assets/template/GatewayManagerTRSServiceContract.docx'; //prod
       // var steUrl = '/assets/template/GatewayManagerTRSServiceContract.docx'; //local loem
     
     var docx = new DocxReader();

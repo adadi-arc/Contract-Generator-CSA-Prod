@@ -242,14 +242,18 @@ contract: any []  = [];
     })
   }
   templates: any [] = [];
-  gettemplates(ID){
+  gettemplates(op){
+
+    debugger
     this.selectedForm = null;
     var query = {
       select:'ID,Title',
-      filter:'contractTypeId eq ' +  ID,
+      filter:'contractTypeId eq ' +  op.ID,
     }
     this.sp.readItems('Contract Type' , query).then((res)=>{
       this.templates = res['d'].results;
     })
   }
+  
+ 
 }

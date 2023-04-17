@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ServiceContract } from 'src/app/models/servicecontract.model';
@@ -14,6 +14,7 @@ declare let DocxReader: any;
   styleUrls: ['./flatiron-csa.component.scss']
 })
 export class FlatironCsaComponent implements OnInit {
+  @Input() ContractorName: any = null;
   selectedAggrementStatus: any =null;
   formData = new contract()
   dataProperty: any[] = [];
@@ -62,32 +63,32 @@ export class FlatironCsaComponent implements OnInit {
       for (var count = 0; count < this.dataProperty.length; count++) {
         var order = this.dataProperty[count];
         // console.log(order);
-        var lines = (order.FREDDPropertyName.results[0].Label).split(':'); //{rod/Staging
-        // var lines = order.Fredd_x0020_Property_x0020_Name_.split(':'); //Local
+          var lines = (order.FREDDPropertyName.results[0].Label).split(':'); //{rod/Staging
+        //  var lines = order.Fredd_x0020_Property_x0020_Name_.split(':'); //Local
         // Prod/Staging
            this.menuData.push({
-              "Property": lines[3],
-              "ID": order.ID,
-              "Region": lines[1],
-              "Market": lines[2],
-              "Owner": order.EntityName,
-              "StateOfFormation": order.StateofFormation,
-              "AdditionalInsureds": order.AdditionalInsureds,
-              "EntityID": order.EntityID,
-              "AgreementStatus": order.Status
-             });
+            "Property": lines[3],
+            "ID": order.ID,
+            "Region": lines[1],
+            "Market": lines[2],
+            "Owner": order.EntityName,
+            "StateOfFormation": order.StateofFormation,
+            "AdditionalInsureds": order.AdditionalInsureds,
+            "EntityID": order.EntityID,
+            "AgreementStatus": order.Status
+           });
         //Local
-          // this.menuData.push({
-          //   Property: lines[3],
-          //   ID: order.ID,
-          //   Region: lines[1],
-          //   Market: lines[2],
-          //   Owner: order.EntityName,
-          //   StateOfFormation: order.StateofFormation,
-          //   AdditionalInsureds: order.AdditionalInsureds,
-          //   EntityID: order.EntityID,
-          //    "AgreementStatus": order.AgreementStatus
-          // });
+            // this.menuData.push({
+            // Property: lines[3],
+            // ID: order.ID,
+            // Region: lines[1],
+            // Market: lines[2],
+            // Owner: order.EntityName,
+            // StateOfFormation: order.StateofFormation,
+            // AdditionalInsureds: order.AdditionalInsureds,
+            // EntityID: order.EntityID,
+          //  "AgreementStatus": order.AgreementStatus
+            // });
       }
       this.Region = [
         ...new Map(
@@ -344,9 +345,11 @@ export class FlatironCsaComponent implements OnInit {
   inWords(v) {
     return this.numberToEnglish(v) + ' ';
   }
-  onSave() {
-       var steUrl = "/sites/fredd/SourceCode1/ChangeOrder/assets/template/ConsultingServicesFlatironTem.docx"; //prod
-    // var steUrl = '/assets/template/ConsultingServicesFlatironTem.docx'; //local
+  async onSave() {
+    await this.serviceContract.SubmitTrackingEntry(this.ContractorName)
+      // var steUrl = "/sites/fredd/SourceCode1/UAT/DocumentFiles/ConsultingServicesFlatironTem.docx"; //UAT
+      var steUrl = "/sites/fredd/SourceCode1/ChangeOrder/assets/template/ConsultingServicesFlatironTem.docx"; //Prod
+    //  var steUrl = '/assets/template/ConsultingServicesFlatironTem.docx'; //local
 
     var docx = new DocxReader();
     docx.Load(steUrl, () => {
@@ -370,6 +373,9 @@ export class FlatironCsaComponent implements OnInit {
       if (docx.Search('City') == true) {
         docxvar['City'] = this.formData.selectedContractorCity;
       }
+      // if (docx.Search('Owner') == true) {
+      //   docxvar['Owner'] = this.formData.selectedOwner.Owner;
+      // }
       if (docx.Search('State') == true) {
         docxvar['State'] = this.formData.selectedContractorState.Title;
       }
@@ -687,9 +693,15 @@ export class FlatironCsaComponent implements OnInit {
           if (docx.Search('Covid') == true) {
             docxvar['Covid'] = this.formData.covid;
           }
+          if (docx.Search('CovidHeading') == true) {
+            docxvar['CovidHeading'] = 'COVID-19.';
+          }
         } else {
           if (docx.Search('Covid') == true) {
             docxvar['Covid'] = '';
+          }
+          if (docx.Search('CovidHeading') == true) {
+            docxvar['CovidHeading'] = '';
           }
         }
       

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ServiceContract } from 'src/app/models/servicecontract.model';
@@ -14,6 +14,7 @@ declare let DocxReader: any;
   styleUrls: ['./flatiron-contract.component.scss']
 })
 export class FlatironContractComponent implements OnInit {
+  @Input() ContractorName: any = null;
   selectedAggrementStatus: any = null;
   formData = new contract()
   dataProperty: any[] = [];
@@ -64,32 +65,32 @@ export class FlatironContractComponent implements OnInit {
       for (var count = 0; count < this.dataProperty.length; count++) {
         var order = this.dataProperty[count];
         // console.log(order);
-         var lines = (order.FREDDPropertyName.results[0].Label).split(':'); //{rod/Staging
-        // var lines = order.Fredd_x0020_Property_x0020_Name_.split(':'); //Local
+        var lines = (order.FREDDPropertyName.results[0].Label).split(':'); //{rod/Staging
+        //  var lines = order.Fredd_x0020_Property_x0020_Name_.split(':'); //Local
         // Prod/Staging
-           this.menuData.push({
-            "Property": lines[3],
-            "ID": order.ID,
-            "Region": lines[1],
-            "Market": lines[2],
-            "Owner": order.EntityName,
-            "StateOfFormation": order.StateofFormation,
-            "AdditionalInsureds": order.AdditionalInsureds,
-            "EntityID": order.EntityID,
-            "AgreementStatus": order.Status
-            });
+          this.menuData.push({
+         "Property": lines[3],
+         "ID": order.ID,
+         "Region": lines[1],
+         "Market": lines[2],
+         "Owner": order.EntityName,
+         "StateOfFormation": order.StateofFormation,
+         "AdditionalInsureds": order.AdditionalInsureds,
+         "EntityID": order.EntityID,
+         "AgreementStatus": order.Status
+         });
         // local
-        //  this.menuData.push({
-        //    Property: lines[3],
-        //    ID: order.ID,
-        //    Region: lines[1],
-        //    Market: lines[2],
-        //    Owner: order.EntityName,
-        //    StateOfFormation: order.StateofFormation,
-        //    AdditionalInsureds: order.AdditionalInsureds,
-        //    EntityID: order.EntityID,
-        //    AgreementStatus: order.AgreementStatus
-        //  });
+          // this.menuData.push({
+            // Property: lines[3],
+            // ID: order.ID,
+            // Region: lines[1],
+            // Market: lines[2],
+            // Owner: order.EntityName,
+            // StateOfFormation: order.StateofFormation,
+            // AdditionalInsureds: order.AdditionalInsureds,
+            // EntityID: order.EntityID,
+            // AgreementStatus: order.AgreementStatus
+          // });
       }
       this.Region = [
         ...new Map(
@@ -194,8 +195,11 @@ export class FlatironContractComponent implements OnInit {
 
     return false;
   }
-  onSave() {
-        var steUrl = '/sites/fredd/SourceCode1/ChangeOrder/assets/template/FlatironServiceContractTemplate.docx'; //prod
+  async onSave() {
+    await this.serviceContract.SubmitTrackingEntry(this.ContractorName)
+
+    // var steUrl = '/sites/fredd/SourceCode1/UAT/DocumentFiles/FlatironServiceContractTemplate.docx'; //UAT
+    var steUrl = '/sites/fredd/SourceCode1/ChangeOrder/assets/template/FlatironServiceContractTemplate.docx'; //prod
     //  steUrl = "/sites/fredd/SourceCode/assets/template/FlatironServiceContractTemplate.docx"; //Staging
     //  var steUrl = '/assets/template/FlatironServiceContractTemplate.docx'; //local
     var docx = new DocxReader();

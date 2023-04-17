@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ServiceContract } from 'src/app/models/servicecontract.model';
@@ -15,6 +15,7 @@ declare let DocxReader: any;
   styleUrls: ['./general-csa.component.scss']
 })
 export class GeneralCsaComponent implements OnInit {
+  @Input() ContractorName: any = null;
   pollutionLiabilityHeading: string = 'Contractor’s Pollution Liability:';
   pollutionLiability: string = 'If Consultant or subconsultant’s Services involve environmental hazards including but not limited to assessing, handling, remediating, treating, storage or disposal of waste or hazardous materials on or about the project site as determined by Owner, Consultant shall maintain a minimum limit of $2,000,000 per incident with a $4,000,000 policy aggregate.  Such coverage shall include defense costs applicable to claims for bodily injury, property damage or clean-up costs.  Claims-made coverage is permitted, provided the policy retroactive date is continuously maintained prior to the commencement date of this Agreement and coverage is continuously maintained during all periods Consultant performs Services for Owner plus an additional period through the statute of repose as applicable.'
   formData = new contract()
@@ -47,7 +48,6 @@ export class GeneralCsaComponent implements OnInit {
 
   }
   ngOnInit(): void {
-
   }
   clearPM() {
     this.formData.selectedPropertyManager = null;
@@ -59,30 +59,30 @@ export class GeneralCsaComponent implements OnInit {
       for (var count = 0; count < this.dataProperty.length; count++) {
         var order = this.dataProperty[count];
         // console.log(order);
-              // var lines = (order.FREDDPropertyName.results[0].Label).split(':'); //{rod/Staging
-               var lines = order.Fredd_x0020_Property_x0020_Name_.split(':'); //Local
+             var lines = (order.FREDDPropertyName.results[0].Label).split(':'); //{rod/Staging
+              // var lines = order.Fredd_x0020_Property_x0020_Name_.split(':'); //Local
         // Prod/Staging
-          //  this.menuData.push({
-          //     "Property": lines[3],
-          //     "ID": order.ID,
-          //     "Region": lines[1],
-          //     "Market": lines[2],
-          //     "Owner": order.EntityName,
-          //     "StateOfFormation": order.StateofFormation,
-          //    "AdditionalInsureds": order.AdditionalInsureds,
-          //     "EntityID": order.EntityID
-          //    });
+               this.menuData.push({
+                "Property": lines[3],
+                "ID": order.ID,
+                "Region": lines[1],
+                "Market": lines[2],
+                "Owner": order.EntityName,
+                "StateOfFormation": order.StateofFormation,
+               "AdditionalInsureds": order.AdditionalInsureds,
+                "EntityID": order.EntityID
+               });
         //Local
-           this.menuData.push({
-             Property: lines[3],
-             ID: order.ID,
-             Region: lines[1],
-             Market: lines[2],
-             Owner: order.EntityName,
-             StateOfFormation: order.StateofFormation,
-             AdditionalInsureds: order.AdditionalInsureds,
-             EntityID: order.EntityID,
-           });
+            // this.menuData.push({
+            // Property: lines[3],
+            // ID: order.ID,
+            // Region: lines[1],
+            // Market: lines[2],
+            // Owner: order.EntityName,
+            // StateOfFormation: order.StateofFormation,
+            // AdditionalInsureds: order.AdditionalInsureds,
+            // EntityID: order.EntityID,
+            // });
       }
       this.Region = [
         ...new Map(
@@ -352,9 +352,12 @@ export class GeneralCsaComponent implements OnInit {
     return this.numberToEnglish(v) + ' ';
   }
 
-  onSave() {
-          //  var steUrl = "/sites/fredd/SourceCode1/ChangeOrder/assets/template/ConsultingServicesAgreement.docx"; //prod
-           var steUrl = '/assets/template/ConsultingServicesAgreement.docx'; //local
+  async onSave() {
+    await this.serviceContract.SubmitTrackingEntry(this.ContractorName)
+    // this.formData.selectedPollutionLiability == true
+          //  var steUrl = "/sites/fredd/SourceCode1/UAT/DocumentFiles/ConsultingServicesAgreement.docx"; //UAT
+           var steUrl = "/sites/fredd/SourceCode1/ChangeOrder/assets/template/ConsultingServicesAgreement.docx"; //prod
+          //  var steUrl = '/assets/template/ConsultingServicesAgreement.docx'; //local
     var docx = new DocxReader();
     docx.Load(steUrl, () => {
       var docxvar = {};
@@ -774,26 +777,33 @@ export class GeneralCsaComponent implements OnInit {
           if (docx.Search('Covid') == true) {
             docxvar['Covid'] = this.formData.covid19;
           }
+          if (docx.Search('CovidHeading') == true) {
+            docxvar['CovidHeading'] = 'COVID-19.';
+          }
         } else {
           if (docx.Search('Covid') == true) {
             docxvar['Covid'] = '';
           }
+          if (docx.Search('CovidHeading') == true) {
+            docxvar['CovidHeading'] = '';
+          }
         }
-        if (this.formData.selectedPollutionLiability == true) {
+        // if (this.formData.selectedPollutionLiability == true) {
           if (docx.Search('Pollution') == true) {
             docxvar['Pollution'] = this.pollutionLiability;
           }
           if (docx.Search('PollutionHeading') == true) {
             docxvar['PollutionHeading'] = this.pollutionLiabilityHeading;
           }
-        } else {
-          if (docx.Search('Pollution') == true) {
-            docxvar['Pollution'] = '';
-          }
-          if (docx.Search('PollutionHeading') == true) {
-            docxvar['PollutionHeading'] = '';
-          }
-        }
+        // } 
+        // else {
+        //   if (docx.Search('Pollution') == true) {
+        //     docxvar['Pollution'] = '';
+        //   }
+        //   if (docx.Search('PollutionHeading') == true) {
+        //     docxvar['PollutionHeading'] = '';
+        //   }
+        // }
       
 
 

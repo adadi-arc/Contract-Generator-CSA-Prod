@@ -22,10 +22,11 @@ import { GetwaymanagerTrsServiceComponent } from './servicecontractform/getwayma
 import { InternalTRSServiceComponent } from './servicecontractform/internal-trsservice/internal-trsservice.component';
 import { ServiceContractUniversityComponent } from './servicecontractform/service-contract-university/service-contract-university.component';
 import { TrsUniversityParkComponent } from './servicecontractform/trs-university-park/trs-university-park.component';
+import { ListTrackingComponent } from './list-tracking/list-tracking.component';
 
 
 @NgModule({
-  declarations: [ServicecontractgeneratorComponent, ServicecontractformComponent, ServiceContractComponent, TRSServiceContractComponent, ChangeOrderComponent, FlatironContractComponent, ServiceContratBmrlpComponent, GeneralCsaComponent, FlatironCsaComponent, TrsCsaComponent, GetwaymanagerTrsServiceComponent, InternalTRSServiceComponent, ServiceContractUniversityComponent, TrsUniversityParkComponent],
+  declarations: [ServicecontractgeneratorComponent, ServicecontractformComponent, ServiceContractComponent, TRSServiceContractComponent, ChangeOrderComponent, FlatironContractComponent, ServiceContratBmrlpComponent, GeneralCsaComponent, FlatironCsaComponent, TrsCsaComponent, GetwaymanagerTrsServiceComponent, InternalTRSServiceComponent, ServiceContractUniversityComponent, TrsUniversityParkComponent, ListTrackingComponent],
   imports: [
     CommonModule,
     ServicecontractgeneratorRoutingModule,

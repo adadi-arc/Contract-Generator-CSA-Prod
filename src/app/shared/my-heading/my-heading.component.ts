@@ -1,4 +1,5 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Router } from '@angular/router';
 import { ThemeService } from 'src/app/services/base/theme.service';
 
 @Component({
@@ -9,10 +10,14 @@ import { ThemeService } from 'src/app/services/base/theme.service';
 export class MyHeadingComponent implements OnInit {
 
   @Input() heading:string ="";
+  @Output() onClick:any = new EventEmitter()
 
-  constructor(public theme:ThemeService) { }
+  constructor(public theme:ThemeService , public Route : Router) { }
 
   ngOnInit(): void {
+  }
+  openList(){
+    this.onClick.emit(true)
   }
 
 }

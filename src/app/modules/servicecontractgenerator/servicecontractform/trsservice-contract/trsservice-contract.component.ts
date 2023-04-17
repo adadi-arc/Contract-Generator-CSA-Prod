@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ServiceContract } from 'src/app/models/servicecontract.model';
@@ -17,6 +17,7 @@ declare let DocxReader: any;
   styleUrls: ['./trsservice-contract.component.scss']
 })
 export class TRSServiceContractComponent implements OnInit {
+  @Input() ContractorName: any = null;
   formData = new contract()
   dataProperty: any[] = [];
   menuData: any[] = [];
@@ -44,35 +45,44 @@ export class TRSServiceContractComponent implements OnInit {
     this.formData.selectedPropertyManager = null;
   }
   getData() {
+    debugger
     this.serviceContract.getAllProperty().then((res) => {
       this.dataProperty = res['d'].results as any[];
       for (var count = 0; count < this.dataProperty.length; count++) {
         var order = this.dataProperty[count];
         // console.log(order);
-               var lines = (order.FREDDPropertyName.results[0].Label).split(':'); //{rod/Staging
-              //  var lines = order.Fredd_x0020_Property_x0020_Name_.split(':'); //Local
-        // Prod/Staging
-           this.menuData.push({
-              "Property": lines[3],
-              "ID": order.ID,
-              "Region": lines[1],
-              "Market": lines[2],
-              "Owner": order.EntityName,
-              "StateOfFormation": order.StateofFormation,
+        var lines = (order.FREDDPropertyName.results[0].Label).split(':'); //{rod/Staging
+        //  var lines = order.Fredd_x0020_Property_x0020_Name_.split(':'); //Local
+        if (order.EntityName == 'RE-BMR Campus at Towne Centre LP' || order.EntityName == 'BMR-Dexter LLC' || order.EntityName == 'BMR-201 Elliott Avenue LLC'
+          || order.EntityName == 'BMR-Gateway Manager LP' || order.EntityName == 'BMR-Gateway of Pacific II LLC' || order.EntityName == 'BMR-Pacific Research Center LP'
+          || order.EntityName == 'BMR-Athena LP' || order.EntityName == 'BRE-BMR 35 Landsdowne LLC' || order.EntityName == 'BRE-BMR 40 Landsdowne LLC'
+          || order.EntityName == 'BRE-BMR 300 Massachusetts LLC' || order.EntityName == 'BRE-BMR 350 Massachusetts LLC' || order.EntityName == 'BRE-BMR Oberlin LP'
+          || order.EntityName == 'BRE-BMR Pilgrim & Sidney LLC' || order.EntityName == 'BRE-BMR 31st LLC' || order.EntityName == 'BMR-Axiom LP'
+          || order.EntityName == 'BioMed Realty LLC' || order.EntityName == 'BMR-500 Fairview Avenue LLC') {
+          // Prod/Staging
+             this.menuData.push({
+             "Property": lines[3],
+             "ID": order.ID,
+             "Region": lines[1],
+             "Market": lines[2],
+             "Owner": order.EntityName,
+             "StateOfFormation": order.StateofFormation,
              "AdditionalInsureds": order.AdditionalInsureds,
-              "EntityID": order.EntityID
+             "EntityID": order.EntityID
              });
-        //Local
-          // this.menuData.push({
-          //   Property: lines[3],
-          //   ID: order.ID,
-          //   Region: lines[1],
-          //   Market: lines[2],
-          //   Owner: order.EntityName,
-          //   StateOfFormation: order.StateofFormation,
-          //   AdditionalInsureds: order.AdditionalInsureds,
-          //   EntityID: order.EntityID,
-          // });
+          //Local
+          //  this.menuData.push({
+          //  Property: lines[3],
+          //  ID: order.ID,
+          //  Region: lines[1],
+          //  Market: lines[2],
+          //  Owner: order.EntityName,
+          //  StateOfFormation: order.StateofFormation,
+          //  AdditionalInsureds: order.AdditionalInsureds,
+          //  EntityID: order.EntityID,
+          //  });
+        }
+
       }
       this.Region = [
         ...new Map(
@@ -101,7 +111,11 @@ export class TRSServiceContractComponent implements OnInit {
       this.Property = this.Property.sort((a, b) =>
         a.Property > b.Property ? 1 : -1
       );
-      console.log(this.Region);
+      // this.Property = this.Property.filter(o => o.Owner == 'BRE-BMR Campus at Towne Centre LP' || o.Owner == 'BMR-Dexter LLC' || o.Owner == 'BMR-201 Elliott Avenue LLC' || o.Owner == 'BMR-Gateway Manager LP'
+      //   || o.Owner == 'BMR-Gateway of Pacific II LLC' || o.Owner == 'BMR-Pacific Research Center LP' || o.Owner == 'BMR-Athena LP' || o.Owner == 'BRE-BMR 35 Landsdowne LLC' || o.Owner == 'BRE-BMR 40 Landsdowne LLC'
+      //   || o.Owner == 'BRE-BMR 300 Massachusetts LLC' || o.Owner == 'BRE-BMR 350 Massachusetts LLC' || o.Owner == 'BRE-BMR Oberlin LP' || o.Owner == 'BRE-BMR Pilgrim & Sidney LLC' || o.Owner == 'BRE-BMR 31st LLC'
+      //   || o.Owner == 'BMR-Axiom LP' || o.Owner == ' BioMed Realty LLC' || o.Owner == 'BMR-500 Fairview Avenue LLC');
+      // console.log(this.Property);
     });
   }
 
@@ -188,13 +202,16 @@ export class TRSServiceContractComponent implements OnInit {
     return false;
   }
 
-  onSave() { 
+  async onSave() { 
+    await this.serviceContract.SubmitTrackingEntry(this.ContractorName)
     if (this.formData.selectedOwner.Owner != 'BMR-Gateway Manager LP') {
+        //  var steUrl ='/sites/fredd/SourceCode1/UAT/DocumentFiles/TRSContractTemplate.docx'; //UAT
          var steUrl ='/sites/fredd/SourceCode1/ChangeOrder/assets/template/TRSContractTemplate.docx'; //prod
       //  var steUrl = "/sites/fredd/SourceCode/assets/template/TRSContractTemplate.docx"; //staging
         // var steUrl = '/assets/template/TRSContractTemplate.docx'; //local
     } else if (this.formData.selectedOwner.Owner == 'BMR-Gateway Manager LP') {
         //  var steUrl = '/assets/template/TRSServicesGatewayManager.docx';
+        //  var steUrl = "/sites/fredd/SourceCode1/UAT/DocumentFiles/TRSServicesGatewayManager.docx"; //UAT
          var steUrl = "/sites/fredd/SourceCode1/ChangeOrder/assets/template/TRSServicesGatewayManager.docx"; //prod
     }
     var docx = new DocxReader();

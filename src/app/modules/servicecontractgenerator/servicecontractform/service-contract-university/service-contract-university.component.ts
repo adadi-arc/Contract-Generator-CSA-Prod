@@ -14,6 +14,7 @@ declare let DocxReader: any;
   styleUrls: ['./service-contract-university.component.scss']
 })
 export class ServiceContractUniversityComponent implements OnInit {
+  @Input() ContractorName: any = null;
   formData = new contract()
   step = 0
   obj: ServiceContract;
@@ -37,7 +38,6 @@ export class ServiceContractUniversityComponent implements OnInit {
     this.getData();
   }
   ngOnInit(): void {
-
   }
   clearPM() {
     this.formData.selectedPropertyManager = null;
@@ -184,9 +184,12 @@ export class ServiceContractUniversityComponent implements OnInit {
     return false;
   }
   onChange(value){}
-  onSave() {
+  async onSave() {
+    await this.serviceContract.SubmitTrackingEntry(this.ContractorName)
+
             //  var steUrl = '/assets/template/ServiceContractUniversityPark.docx';
             //  var steUrl = '/assets/template/Form of Service Contract (University Park 11-7-22).docx';
+            //  var steUrl = "/sites/fredd/SourceCode1/UAT/DocumentFiles/Form of Service Contract (University Park 11-7-22).docx"; //UAT     
              var steUrl = "/sites/fredd/SourceCode1/ChangeOrder/assets/template/Form of Service Contract (University Park 11-7-22).docx"; //prod     
     var docx = new DocxReader();
     docx.Load(steUrl, () => {

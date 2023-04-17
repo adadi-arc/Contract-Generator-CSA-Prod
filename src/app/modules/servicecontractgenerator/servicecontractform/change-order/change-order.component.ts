@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ServiceContract } from 'src/app/models/servicecontract.model';
@@ -6,6 +6,7 @@ import { ServicecontractService } from 'src/app/services/servicecontract.service
 import { contract } from '../modal';
 import moment, { invalid } from 'moment';
 import { formatCurrency } from '@angular/common';
+import { SpService } from '../../../../services/base/sp.service';
 
 declare let DocxReader: any;
 
@@ -16,6 +17,7 @@ declare let DocxReader: any;
   styleUrls: ['./change-order.component.scss']
 })
 export class ChangeOrderComponent implements OnInit {
+  @Input() ContractorName: any = null;
   formData = new contract()
   dataProperty: any[] = [];
   menuData: any[] = [];
@@ -28,7 +30,7 @@ export class ChangeOrderComponent implements OnInit {
   constructor(
     public serviceContract: ServicecontractService,
     public route: ActivatedRoute,
-    public router: Router
+    public router: Router,
   ) {
     // super(route);
     // this.obj = new ServiceContract();
@@ -49,29 +51,29 @@ export class ChangeOrderComponent implements OnInit {
       for (var count = 0; count < this.dataProperty.length; count++) {
         var order = this.dataProperty[count];
         // console.log(order);
-            var lines = (order.FREDDPropertyName.results[0].Label).split(':'); //{rod/Staging
-        //  var lines = order.Fredd_x0020_Property_x0020_Name_.split(':'); //Local
+              var lines = (order.FREDDPropertyName.results[0].Label).split(':'); //{rod/Staging
+          //  var lines = order.Fredd_x0020_Property_x0020_Name_.split(':'); //Local
         // Prod/Staging
-          this.menuData.push({
-             "Property": lines[3],
-             "ID": order.ID,
-             "Region": lines[1],
-             "Market": lines[2],
-             "Owner": order.EntityName,
-             "StateOfFormation": order.StateofFormation,
+            this.menuData.push({
+           "Property": lines[3],
+           "ID": order.ID,
+           "Region": lines[1],
+           "Market": lines[2],
+           "Owner": order.EntityName,
+           "StateOfFormation": order.StateofFormation,
             "AdditionalInsureds": order.AdditionalInsureds,
-             "EntityID": order.EntityID
+           "EntityID": order.EntityID
             });
         //Local
         //  this.menuData.push({
-        //    Property: lines[3],
-        //    ID: order.ID,
-        //    Region: lines[1],
-        //    Market: lines[2],
-        //    Owner: order.EntityName,
-        //    StateOfFormation: order.StateofFormation,
-        //    AdditionalInsureds: order.AdditionalInsureds,
-        //    EntityID: order.EntityID,
+        //  Property: lines[3],
+        //  ID: order.ID,
+        //  Region: lines[1],
+        //  Market: lines[2],
+        //  Owner: order.EntityName,
+        //  StateOfFormation: order.StateofFormation,
+        //  AdditionalInsureds: order.AdditionalInsureds,
+        //  EntityID: order.EntityID,
         //  });
       }
       this.Region = [
@@ -210,6 +212,8 @@ export class ChangeOrderComponent implements OnInit {
       this.formData.selectedNetChange = '';
       this.formData.selectedPreviousGMP = '';
       this.formData.selectedCOincdec = null;
+      this.formData.ExpirationDate = null;
+      this.formData.Architect = null;
       this.formData.selectedCOamount = '';
       this.formData.selectedNewGMP = '';
       this.formData.selectedChangeTime = null;
@@ -252,8 +256,10 @@ export class ChangeOrderComponent implements OnInit {
 
     return false;
   }
-  onSave() {
-    var steUrl = '/sites/fredd/SourceCode1/ChangeOrder/assets/template/ChangeOrderTemplate.docx'; //prod
+  async onSave() {
+   await this.serviceContract.SubmitTrackingEntry(this.ContractorName)
+    // var steUrl = '/sites/fredd/SourceCode1/UAT/DocumentFiles/ChangeOrderTemplate.docx'; //UAT
+     var steUrl = '/sites/fredd/SourceCode1/ChangeOrder/assets/template/ChangeOrderTemplate.docx'; //prod
     // var steUrl = "/sites/fredd/SourceCode/assets/template/TRSContractTemplate.docx"; //staging
     // var steUrl = '/assets/template/ChangeOrderTemplate.docx'; //local
     var docx = new DocxReader();
@@ -348,6 +354,11 @@ export class ChangeOrderComponent implements OnInit {
           'MM/DD/YY'
         );
       }
+      if (docx.Search('ExpirationDate') == true) {
+        docxvar['ExpirationDate'] = moment(this.formData.ExpirationDate).format(
+          'MM/DD/YY'
+        );
+      }
       if (docx.Search('ProjectNumber') == true) {
         docxvar['ProjectNumber'] = this.formData.selectedProjectNum;
       }
@@ -436,15 +447,25 @@ export class ChangeOrderComponent implements OnInit {
             this.formData.selectedTimeChange +
             ' days.';
         }
+        if (docx.Search('Days') == true) {
+          docxvar['Days'] = this.formData.selectedTimeChange;
+        }
+        
       }
       if (this.formData.selectedChangeTime == false) {
         if (docx.Search('ContractTime') == true) {
           docxvar['ContractTime'] = '';
         }
+        if (docx.Search('Days') == true) {
+          docxvar['Days'] = '';
+        }
       }
       if (this.formData.selectedChangeTime == undefined) {
         if (docx.Search('ContractTime') == true) {
           docxvar['ContractTime'] = '';
+        }
+        if (docx.Search('Days') == true) {
+          docxvar['Days'] = '';
         }
       }
 
@@ -484,6 +505,17 @@ export class ChangeOrderComponent implements OnInit {
           }
         }
       }
+       if (this.formData.Architect == true) {
+        if (docx.Search('Architect') == true) {
+          docxvar['Architect'] = this.formData.ArchitectName;
+        }
+       } 
+       else {
+         if (docx.Search('Architect') == true) {
+           docxvar['Architect'] = '';    }
+        
+       }
+    
 
 
 
